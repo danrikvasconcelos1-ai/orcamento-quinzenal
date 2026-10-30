@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><meta name="color-scheme" content="light dark">
+<title>Entrar – Orçamento Quinzenal</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#EDF1F0;--surface:#fff;--field:#F2F5F4;--ink:#14201D;--muted:#5A6A66;--line:#D3DCD9;--accent:#0D6A5E;--on-accent:#fff;--neg:#B23829;--neg-bg:#F8E0DC;
+--font-d:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;--font-b:'IBM Plex Sans','Segoe UI',system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root{--bg:#0E1614;--surface:#162220;--field:#1D2C29;--ink:#E5EEEB;--muted:#93A7A1;--line:#2A3C38;--accent:#4FC5B2;--on-accent:#08201C;--neg:#FF8D7C;--neg-bg:#3F201C}}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.45 var(--font-b);display:grid;place-items:center;padding:16px}
+main{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px 24px;display:grid;gap:18px}
+h1{font:700 26px/1.1 var(--font-d);margin:0}
+p{margin:0;color:var(--muted)}
+form{display:grid;gap:14px}
+label{display:grid;gap:6px;font-weight:500;font-size:14px}
+input{font:inherit;font-size:16px;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:8px;padding:11px 12px;width:100%}
+input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+button{font:600 16px var(--font-b);background:var(--accent);color:var(--on-accent);border:0;border-radius:8px;padding:12px;cursor:pointer}
+button:disabled{opacity:.6;cursor:default}
+.err{background:var(--neg-bg);color:var(--neg);border-radius:8px;padding:9px 12px;font-size:14px}
+</style></head>
+<body>
+<main>
+  <div><h1>Orçamento Quinzenal</h1><p>Entre com seu usuário e senha.</p></div>
+  <form id="f">
+    <label for="u">Usuário<input id="u" name="username" autocomplete="username" autocapitalize="none" autocorrect="off" required autofocus></label>
+    <label for="p">Senha<input id="p" name="password" type="password" autocomplete="current-password" required></label>
+    <div class="err" id="e" role="alert" hidden></div>
+    <button id="b" type="submit">Entrar</button>
+  </form>
+</main>
+<script>
+var f=document.getElementById('f'),e=document.getElementById('e'),b=document.getElementById('b');
+f.addEventListener('submit',function(ev){
+  ev.preventDefault(); e.hidden=true; b.disabled=true; b.textContent='Entrando…';
+  fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user:document.getElementById('u').value,password:document.getElementById('p').value})})
+  .then(function(r){ if(r.ok){ location.reload(); return; } return r.json().then(function(j){ throw new Error(j.error||'Erro ao entrar.'); },function(){ throw new Error('Erro ao entrar.'); }); })
+  .catch(function(x){ e.textContent=x.message; e.hidden=false; b.disabled=false; b.textContent='Entrar'; });
+});
+</script>
+</body></html>
